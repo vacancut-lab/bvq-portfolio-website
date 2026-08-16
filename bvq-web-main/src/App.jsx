@@ -22,6 +22,7 @@ import { SpaExperience } from './SpaExperience';
 import { TravelPage } from './TravelPage';
 import { RestaurantPage } from './RestaurantPage';
 import { RealEstatePage } from './RealEstatePage';
+import { AutomotiveExperience } from './AutomotiveExperience';
 
 function Brand() {
   return (
@@ -249,6 +250,10 @@ export function App() {
 
   if (/^\/san-pham\/spa\/(?:kham-pha|khampha)\/?$/.test(window.location.pathname)) {
     return <SpaExperience />;
+  }
+
+  if (/^\/san-pham\/o-to\/kham-pha\/?$/.test(window.location.pathname)) {
+    return <AutomotiveExperience />;
   }
 
   const productMatch = window.location.pathname.match(/^\/san-pham\/([^/]+)\/?$/);
