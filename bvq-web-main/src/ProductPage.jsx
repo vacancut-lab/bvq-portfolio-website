@@ -206,7 +206,12 @@ export function ProductPage({ slug }) {
             ))}
           </div>
 
-          <a className="product-cta" href={product.slug === 'spa' ? '/san-pham/spa/khampha' : `mailto:hello@motstudio.vn?subject=${encodeURIComponent(product.navTitle)}`}>
+          <a
+            className="product-cta"
+            href={['spa', 'du-lich', 'nha-hang', 'bat-dong-san'].includes(product.slug)
+              ? `/san-pham/${product.slug}/kham-pha`
+              : `mailto:hello@motstudio.vn?subject=${encodeURIComponent(product.navTitle)}`}
+          >
             {product.cta}<ArrowRight />
           </a>
         </div>

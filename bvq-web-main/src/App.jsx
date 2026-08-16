@@ -21,6 +21,7 @@ import { ProductPage, productSlugs } from './ProductPage';
 import { SpaExperience } from './SpaExperience';
 import { TravelPage } from './TravelPage';
 import { RestaurantPage } from './RestaurantPage';
+import { RealEstatePage } from './RealEstatePage';
 
 function Brand() {
   return (
@@ -232,15 +233,21 @@ function Footer() {
 }
 
 export function App() {
-  if (window.location.pathname === '/san-pham/nha-hang' || window.location.pathname === '/san-pham/nha-hang/') {
+  // Dedicated product experiences live one level below the product overview.
+  // Keep the parent slugs available for the shared product landing page.
+  if (/^\/san-pham\/nha-hang\/kham-pha\/?$/.test(window.location.pathname)) {
     return <RestaurantPage />;
   }
 
-  if (window.location.pathname === '/san-pham/du-lich' || window.location.pathname === '/san-pham/du-lich/') {
+  if (/^\/san-pham\/du-lich\/kham-pha\/?$/.test(window.location.pathname)) {
     return <TravelPage />;
   }
 
-  if (/^\/san-pham\/spa\/khampha\/?$/.test(window.location.pathname)) {
+  if (/^\/san-pham\/bat-dong-san\/kham-pha\/?$/.test(window.location.pathname)) {
+    return <RealEstatePage />;
+  }
+
+  if (/^\/san-pham\/spa\/(?:kham-pha|khampha)\/?$/.test(window.location.pathname)) {
     return <SpaExperience />;
   }
 
