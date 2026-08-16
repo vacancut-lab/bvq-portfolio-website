@@ -208,7 +208,7 @@ export function ProductPage({ slug }) {
 
           <a
             className="product-cta"
-            href={['spa', 'du-lich', 'nha-hang', 'bat-dong-san', 'o-to'].includes(product.slug)
+            href={['spa', 'du-lich', 'nha-hang', 'bat-dong-san', 'o-to', 'thoi-trang'].includes(product.slug)
               ? `/san-pham/${product.slug}/kham-pha`
               : `mailto:hello@motstudio.vn?subject=${encodeURIComponent(product.navTitle)}`}
           >

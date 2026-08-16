@@ -23,14 +23,12 @@ import { TravelPage } from './TravelPage';
 import { RestaurantPage } from './RestaurantPage';
 import { RealEstatePage } from './RealEstatePage';
 import { AutomotiveExperience } from './AutomotiveExperience';
+import { FashionExperience } from './FashionExperience';
 
 function Brand() {
   return (
     <a className="brand" href="#top" aria-label="Về đầu trang">
-      <svg viewBox="0 0 48 48" aria-hidden="true">
-        <path d="M24 3 42 13v22L24 45 6 35V13Z" />
-        <path d="m6 13 18 11 18-11M24 3v42M14 18v14l10 6 10-6V18" />
-      </svg>
+      <span className="brand-name">Bách Vân Quán</span>
     </a>
   );
 }
@@ -254,6 +252,10 @@ export function App() {
 
   if (/^\/san-pham\/o-to\/kham-pha\/?$/.test(window.location.pathname)) {
     return <AutomotiveExperience />;
+  }
+
+  if (/^\/san-pham\/thoi-trang\/kham-pha\/?$/.test(window.location.pathname)) {
+    return <FashionExperience />;
   }
 
   const productMatch = window.location.pathname.match(/^\/san-pham\/([^/]+)\/?$/);
