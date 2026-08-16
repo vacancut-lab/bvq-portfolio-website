@@ -20,6 +20,7 @@ import { assetRegistry, pricing, process, worlds } from './content';
 import { ProductPage, productSlugs } from './ProductPage';
 import { SpaExperience } from './SpaExperience';
 import { TravelPage } from './TravelPage';
+import { RestaurantPage } from './RestaurantPage';
 
 function Brand() {
   return (
@@ -231,6 +232,10 @@ function Footer() {
 }
 
 export function App() {
+  if (window.location.pathname === '/san-pham/nha-hang' || window.location.pathname === '/san-pham/nha-hang/') {
+    return <RestaurantPage />;
+  }
+
   if (window.location.pathname === '/san-pham/du-lich' || window.location.pathname === '/san-pham/du-lich/') {
     return <TravelPage />;
   }
