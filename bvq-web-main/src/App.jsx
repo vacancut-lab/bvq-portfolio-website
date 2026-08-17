@@ -24,6 +24,7 @@ import { RestaurantPage } from './RestaurantPage';
 import { RealEstatePage } from './RealEstatePage';
 import { AutomotiveExperience } from './AutomotiveExperience';
 import { FashionExperience } from './FashionExperience';
+import { PricingPage } from './PricingPage';
 
 function Brand() {
   return (
@@ -232,6 +233,10 @@ function Footer() {
 }
 
 export function App() {
+  if (/^\/pricing\/?$/.test(window.location.pathname)) {
+    return <PricingPage />;
+  }
+
   // Dedicated product experiences live one level below the product overview.
   // Keep the parent slugs available for the shared product landing page.
   if (/^\/san-pham\/nha-hang\/kham-pha\/?$/.test(window.location.pathname)) {
