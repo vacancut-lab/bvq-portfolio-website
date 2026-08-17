@@ -1,0 +1,209 @@
+.page-transition {
+  position: fixed;
+  inset: 0;
+  z-index: 96;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  isolation: isolate;
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 320ms cubic-bezier(.16, 1, .3, 1);
+}
+
+.page-transition.pt-idle {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.page-transition.pt-exit {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.page-transition.pt-enter {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: none;
+}
+
+.pt-curtain {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 85% 70% at 50% 32%, rgba(212, 169, 87, 0.16), transparent 62%),
+    radial-gradient(ellipse 120% 90% at 50% 100%, rgba(0, 0, 0, 0.55), transparent 60%),
+    linear-gradient(180deg, #0d0c09 0%, #090806 55%, #070605 100%);
+  transform: translateY(0);
+  will-change: transform;
+}
+
+.pt-exit .pt-curtain {
+  animation: pt-curtain-in 520ms cubic-bezier(.16, 1, .3, 1) both;
+}
+
+.pt-enter .pt-curtain {
+  animation: pt-curtain-out 620ms cubic-bezier(.16, 1, .3, 1) 120ms both;
+}
+
+@keyframes pt-curtain-in {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+@keyframes pt-curtain-out {
+  from { transform: translateY(0); }
+  to { transform: translateY(-100%); }
+}
+
+.pt-motif {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  opacity: 0.95;
+}
+
+.pt-exit .pt-motif {
+  animation: pt-motif-in 520ms cubic-bezier(.16, 1, .3, 1) both;
+}
+
+.pt-enter .pt-motif {
+  animation: pt-motif-out 420ms ease both;
+}
+
+@keyframes pt-motif-in {
+  from { opacity: 0; }
+  to { opacity: 0.95; }
+}
+
+@keyframes pt-motif-out {
+  from { opacity: 0.95; }
+  to { opacity: 0; }
+}
+
+.pt-wordmark {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  text-align: center;
+  padding: 0 24px;
+}
+
+.pt-wordmark-label {
+  font-family: var(--serif);
+  font-size: clamp(22px, 3vw, 32px);
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  color: #f4ecdf;
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.45);
+}
+
+.pt-wordmark-theme {
+  font-size: 9px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.pt-exit .pt-wordmark {
+  animation: pt-wordmark-in 520ms cubic-bezier(.16, 1, .3, 1) 140ms both;
+}
+
+.pt-enter .pt-wordmark {
+  animation: pt-wordmark-out 380ms ease both;
+}
+
+@keyframes pt-wordmark-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pt-wordmark-out {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(-8px); }
+}
+
+.pt-progress {
+  position: absolute;
+  left: 50%;
+  bottom: 42px;
+  transform: translateX(-50%);
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pt-progress-track {
+  width: 88px;
+  height: 2px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+}
+
+.pt-progress-fill {
+  height: 100%;
+  width: 38%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--gold), var(--gold-bright));
+  animation: pt-progress 1.15s ease-in-out infinite;
+}
+
+@keyframes pt-progress {
+  0% { transform: translateX(-100%); }
+  50% { transform: translateX(60%); }
+  100% { transform: translateX(170%); }
+}
+
+.pt-exit .pt-progress {
+  animation: pt-progress-in 420ms ease 260ms both;
+}
+
+.pt-enter .pt-progress {
+  animation: pt-progress-out 260ms ease both;
+}
+
+@keyframes pt-progress-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes pt-progress-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pt-curtain,
+  .pt-motif,
+  .pt-wordmark,
+  .pt-progress {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .page-transition {
+    transition: opacity 180ms ease;
+  }
+
+  .page-transition .pt-motif {
+    display: none;
+  }
+
+  .page-transition.pt-exit {
+    opacity: 1;
+  }
+
+  .page-transition.pt-enter {
+    opacity: 0;
+  }
+}

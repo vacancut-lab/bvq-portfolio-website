@@ -4,6 +4,7 @@ import { App } from './App';
 import './styles.css';
 import './restaurant.css';
 import './pricing.css';
+import './transitions/transitions.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

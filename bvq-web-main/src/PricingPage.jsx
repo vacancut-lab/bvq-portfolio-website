@@ -70,16 +70,8 @@ function useCountUp(target, duration = 700) {
   return display;
 }
 
-function navigateTo(href) {
-  const isHash = href.startsWith('#');
-  if (isHash) {
-    document.querySelector(href)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    return;
-  }
-  document.body.classList.add('page-leaving');
-  window.setTimeout(() => {
-    window.location.href = href;
-  }, 260);
+function scrollToHash(href) {
+  document.querySelector(href)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function PricingHeader() {
@@ -98,11 +90,11 @@ function PricingHeader() {
       </a>
       <nav className={open ? 'nav is-open' : 'nav'} aria-label="Điều hướng bảng giá">
         {links.map(([label, href]) => (
-          <a key={href} href={href} onClick={(event) => { setOpen(false); if (href.startsWith('#')) { event.preventDefault(); navigateTo(href); } }}>
+          <a key={href} href={href} onClick={(event) => { setOpen(false); if (href.startsWith('#')) { event.preventDefault(); scrollToHash(href); } }}>
             {label}
           </a>
         ))}
-        <a className="nav-cta" href="#tu-van" onClick={(event) => { event.preventDefault(); setOpen(false); navigateTo('#tu-van'); }}>
+        <a className="nav-cta" href="#tu-van" onClick={(event) => { event.preventDefault(); setOpen(false); scrollToHash('#tu-van'); }}>
           Tư vấn dự án
         </a>
       </nav>
@@ -125,10 +117,10 @@ function PricingHero() {
           được thiết kế riêng cho thương hiệu.
         </p>
         <div className="pricing-hero-actions">
-          <a className="button button-primary" href="#goi" onClick={(event) => { event.preventDefault(); navigateTo('#goi'); }}>
+          <a className="button button-primary" href="#goi" onClick={(event) => { event.preventDefault(); scrollToHash('#goi'); }}>
             XEM CÁC GÓI <ArrowRight size={15} />
           </a>
-          <a className="button button-ghost" href="#tu-van" onClick={(event) => { event.preventDefault(); navigateTo('#tu-van'); }}>
+          <a className="button button-ghost" href="#tu-van" onClick={(event) => { event.preventDefault(); scrollToHash('#tu-van'); }}>
             TƯ VẤN CHO TÔI
           </a>
         </div>
@@ -212,7 +204,7 @@ function PricingCards({ activeId }) {
               <a
                 className={`button ${pkg.highlight ? 'button-primary' : 'button-outline'}`}
                 href="#tu-van"
-                onClick={(event) => { event.preventDefault(); navigateTo('#tu-van'); }}
+                onClick={(event) => { event.preventDefault(); scrollToHash('#tu-van'); }}
               >
                 {pkg.cta}
               </a>
@@ -268,7 +260,7 @@ function IndustryPricing() {
       </div>
       <div className="industry-list">
         {INDUSTRIES.map((industry) => (
-          <a key={industry.id} className="industry-item" href={`/san-pham/${industry.slug}`} onClick={(event) => { event.preventDefault(); navigateTo(`/san-pham/${industry.slug}`); }}>
+          <a key={industry.id} className="industry-item" href={`/san-pham/${industry.slug}`}>
             <span className="industry-name">{industry.name}</span>
             <span className="industry-packages">{industry.packages.join(' / ')}</span>
             <span className="industry-demo">XEM DEMO <ArrowRight size={13} /></span>
@@ -446,7 +438,7 @@ function PortfolioProof() {
         {INDUSTRIES.map((industry) => {
           const imageSrc = assetRegistry[industry.id] || assetRegistry.studioHero;
           return (
-            <a key={industry.id} className="proof-card" href={`/san-pham/${industry.slug}`} onClick={(event) => { event.preventDefault(); navigateTo(`/san-pham/${industry.slug}`); }}>
+            <a key={industry.id} className="proof-card" href={`/san-pham/${industry.slug}`}>
               <img src={imageSrc} alt={`Trải nghiệm ${industry.name.toLowerCase()}`} loading="lazy" decoding="async" />
               <span>{industry.name}</span>
             </a>
@@ -494,8 +486,8 @@ function FinalCTA() {
         <h2>BẠN ĐANG CẦN<br /><em>WEBSITE NÀO?</em></h2>
         <p>Cho chúng tôi biết bạn đang xây dựng điều gì. Chúng tôi sẽ giúp bạn chọn đúng mức đầu tư.</p>
         <div className="final-actions">
-          <a className="button button-primary" href="#tu-van" onClick={(event) => { event.preventDefault(); navigateTo('#tu-van'); }}>TƯ VẤN DỰ ÁN <ArrowRight size={15} /></a>
-          <a className="button button-ghost" href="/#showroom" onClick={(event) => { event.preventDefault(); navigateTo('/#showroom'); }}>XEM PORTFOLIO</a>
+          <a className="button button-primary" href="#tu-van" onClick={(event) => { event.preventDefault(); scrollToHash('#tu-van'); }}>TƯ VẤN DỰ ÁN <ArrowRight size={15} /></a>
+          <a className="button button-ghost" href="/#showroom">XEM PORTFOLIO</a>
         </div>
       </div>
     </section>
@@ -563,7 +555,7 @@ function ConsultationForm() {
 function MobileStickyCTA() {
   return (
     <div className="mobile-sticky-cta">
-      <a className="button button-primary" href="#tu-van" onClick={(event) => { event.preventDefault(); navigateTo('#tu-van'); }}>
+      <a className="button button-primary" href="#tu-van" onClick={(event) => { event.preventDefault(); scrollToHash('#tu-van'); }}>
         TƯ VẤN DỰ ÁN
       </a>
     </div>

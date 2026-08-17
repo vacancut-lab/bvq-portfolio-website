@@ -27,6 +27,8 @@ import { RealEstatePage } from './RealEstatePage';
 import { AutomotiveExperience } from './AutomotiveExperience';
 import { FashionExperience } from './FashionExperience';
 import { PricingPage } from './PricingPage';
+import { useSpaNavigation } from './transitions/useSpaNavigation';
+import { PageTransition } from './transitions/PageTransition';
 
 function Brand() {
   return (
@@ -67,13 +69,25 @@ function Hero() {
 
   useEffect(() => {
     const node = ref.current;
+    if (!node) return undefined;
+    let raf = 0;
+    let pending = null;
     const move = (event) => {
-      const rect = node.getBoundingClientRect();
-      node.style.setProperty('--mx', `${((event.clientX - rect.left) / rect.width - 0.5) * 2}`);
-      node.style.setProperty('--my', `${((event.clientY - rect.top) / rect.height - 0.5) * 2}`);
+      pending = event;
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        if (!pending || !node) return;
+        const rect = node.getBoundingClientRect();
+        node.style.setProperty('--mx', `${((pending.clientX - rect.left) / rect.width - 0.5) * 2}`);
+        node.style.setProperty('--my', `${((pending.clientY - rect.top) / rect.height - 0.5) * 2}`);
+      });
     };
     node.addEventListener('pointermove', move);
-    return () => node.removeEventListener('pointermove', move);
+    return () => {
+      node.removeEventListener('pointermove', move);
+      if (raf) cancelAnimationFrame(raf);
+    };
   }, []);
 
   useEffect(() => {
@@ -234,8 +248,8 @@ function Footer() {
   );
 }
 
-function FloatingDock() {
-  const path = window.location.pathname;
+function FloatingDock({ pathname }) {
+  const path = pathname ?? (typeof window !== 'undefined' ? window.location.pathname : '/');
   const isPricing = /^\/pricing\/?$/.test(path);
   const isProduct = /^\/san-pham\/[^/]+\/?$/.test(path);
   return (
@@ -255,41 +269,56 @@ function FloatingDock() {
   );
 }
 
-export function App() {
-  if (/^\/pricing\/?$/.test(window.location.pathname)) {
-    return <><PricingPage /><FloatingDock /></>;
+function RoutedContent({ pathname }) {
+  if (/^\/pricing\/?$/.test(pathname)) {
+    return <PricingPage />;
   }
 
-  // Dedicated product experiences live one level below the product overview.
-  // Keep the parent slugs available for the shared product landing page.
-  if (/^\/san-pham\/nha-hang\/kham-pha\/?$/.test(window.location.pathname)) {
-    return <><RestaurantPage /><FloatingDock /></>;
+  if (/^\/san-pham\/nha-hang\/kham-pha\/?$/.test(pathname)) {
+    return <RestaurantPage />;
   }
 
-  if (/^\/san-pham\/du-lich\/kham-pha\/?$/.test(window.location.pathname)) {
-    return <><TravelPage /><FloatingDock /></>;
+  if (/^\/san-pham\/du-lich\/kham-pha\/?$/.test(pathname)) {
+    return <TravelPage />;
   }
 
-  if (/^\/san-pham\/bat-dong-san\/kham-pha\/?$/.test(window.location.pathname)) {
-    return <><RealEstatePage /><FloatingDock /></>;
+  if (/^\/san-pham\/bat-dong-san\/kham-pha\/?$/.test(pathname)) {
+    return <RealEstatePage />;
   }
 
-  if (/^\/san-pham\/spa\/(?:kham-pha|khampha)\/?$/.test(window.location.pathname)) {
-    return <><SpaExperience /><FloatingDock /></>;
+  if (/^\/san-pham\/spa\/(?:kham-pha|khampha)\/?$/.test(pathname)) {
+    return <SpaExperience />;
   }
 
-  if (/^\/san-pham\/o-to\/kham-pha\/?$/.test(window.location.pathname)) {
-    return <><AutomotiveExperience /><FloatingDock /></>;
+  if (/^\/san-pham\/o-to\/kham-pha\/?$/.test(pathname)) {
+    return <AutomotiveExperience />;
   }
 
-  if (/^\/san-pham\/thoi-trang\/kham-pha\/?$/.test(window.location.pathname)) {
-    return <><FashionExperience /><FloatingDock /></>;
+  if (/^\/san-pham\/thoi-trang\/kham-pha\/?$/.test(pathname)) {
+    return <FashionExperience />;
   }
 
-  const productMatch = window.location.pathname.match(/^\/san-pham\/([^/]+)\/?$/);
+  const productMatch = pathname.match(/^\/san-pham\/([^/]+)\/?$/);
   if (productMatch && productSlugs.includes(productMatch[1])) {
-    return <><ProductPage slug={productMatch[1]} /><FloatingDock /></>;
+    return <ProductPage slug={productMatch[1]} />;
   }
 
-  return <><Header /><main><Hero /><Showroom /><Thinking /><Difference /><Process /><Pricing /></main><Footer /><FloatingDock /></>;
+  return <><Header /><main><Hero /><Showroom /><Thinking /><Difference /><Process /><Pricing /></main><Footer /></>;
+}
+
+export function App() {
+  const { pathname, isTransitioning, targetPath, phase, finishTransition } = useSpaNavigation();
+
+  return (
+    <>
+      <RoutedContent pathname={pathname} />
+      <FloatingDock pathname={pathname} />
+      <PageTransition
+        isTransitioning={isTransitioning}
+        targetPath={targetPath}
+        phase={phase}
+        onEntered={finishTransition}
+      />
+    </>
+  );
 }
