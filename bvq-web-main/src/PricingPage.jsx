@@ -496,55 +496,122 @@ function FinalCTA() {
 
 function ConsultationForm() {
   const [submitted, setSubmitted] = useState(false);
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    setSubmitted(true);
+  const [sending, setSending] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [formError, setFormError] = useState('');
+  const [values, setValues] = useState({ name:'', company:'', industry:'', need:'', budget:'', description:'', phone:'', email:'', consent:false, website:'' });
+  const setVal = (k) => (e) => setValues((v) => ({ ...v, [k]: e.target.type === 'checkbox' ? e.target.checked : e.target.value }));
+
+  const validate = () => {
+    const e = {};
+    const phoneRe = /^(0|\+84)(3|5|7|8|9)\d{8}$/;
+    const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    if (!values.name.trim() || values.name.trim().length < 2) e.name = 'Vui lòng nhập họ tên.';
+    if (!values.phone.trim()) e.phone = 'Vui lòng nhập số điện thoại.';
+    else if (!phoneRe.test(values.phone.replace(/[\s.\-()]/g,''))) e.phone = 'SĐT không hợp lệ (VD: 0901234567).';
+    if (!values.email.trim()) e.email = 'Vui lòng nhập email.';
+    else if (!emailRe.test(values.email.trim())) e.email = 'Email không hợp lệ.';
+    if (!values.consent) e.consent = 'Bạn cần đồng ý để chúng tôi liên hệ lại.';
+    if (values.description.length > 2000) e.description = 'Mô tả tối đa 2000 ký tự.';
+    return e;
   };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setFormError('');
+    const e = validate();
+    setErrors(e);
+    if (Object.keys(e).length) return;
+    setSending(true);
+    try {
+      const res = await fetch('/api/lead', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ ...values, page: window.location.href }),
+      });
+      const data = await res.json().catch(()=> ({}));
+      if (!res.ok || data.ok === false) {
+        if (data.errors) { setErrors(data.errors); setFormError('Vui lòng kiểm tra lại thông tin.'); }
+        else setFormError(data.error || data.detail || 'Gửi chưa thành công, vui lòng thử lại.');
+        return;
+      }
+      setSubmitted(true);
+    } catch {
+      setFormError('Không kết nối được máy chủ, vui lòng thử lại.');
+    } finally {
+      setSending(false);
+    }
+  };
+
   return (
     <section className="consultation-section" id="tu-van">
       <div className="consultation-inner">
         <div className="consultation-intro">
           <div className="section-kicker">BẮT ĐẦU</div>
           <h2>TƯ VẤN DỰ ÁN</h2>
-          <p>Kể cho chúng tôi về doanh nghiệp và mục tiêu của bạn. Chúng tôi sẽ phản hồi trong vòng 24 giờ.</p>
+          <p>Kể cho chúng tôi về doanh nghiệp và mục tiêu của bạn. Chúng tôi sẽ phản hồi trong vòng 24 giờ. <span style={{color:'#f0c872'}}>Thông tin được bảo mật, chỉ dùng để tư vấn.</span></p>
         </div>
         {submitted ? (
           <div className="consultation-success" role="status">
             <Check size={32} />
             <strong>ĐÃ NHẬN YÊU CẦU.</strong>
-            <p>Chúng tôi sẽ liên hệ bạn sớm nhất để trao đổi chi tiết.</p>
+            <p>Chúng tôi sẽ liên hệ bạn sớm nhất để trao đổi chi tiết qua SĐT/Email bạn đã để lại.</p>
           </div>
         ) : (
-          <form className="consultation-form" onSubmit={handleSubmit}>
-            <label htmlFor="cf-name">HỌ TÊN</label>
-            <input id="cf-name" required placeholder="Nguyễn Văn A" />
+          <form className="consultation-form" onSubmit={handleSubmit} noValidate>
+            {/* Honeypot — ẩn với người thật, bẫy bot */}
+            <input type="text" name="website" value={values.website} onChange={setVal('website')} tabIndex={-1} autoComplete="off" aria-hidden="true" style={{position:'absolute',left:'-9999px',width:1,height:1,opacity:0}} />
+
+            <label htmlFor="cf-name">HỌ TÊN *</label>
+            <input id="cf-name" value={values.name} onChange={setVal('name')} required placeholder="Nguyễn Văn A" autoComplete="name" />
+            {errors.name && <span className="field-error">{errors.name}</span>}
+
+            <label htmlFor="cf-phone">SỐ ĐIỆN THOẠI *</label>
+            <input id="cf-phone" value={values.phone} onChange={setVal('phone')} required inputMode="tel" placeholder="0901234567" autoComplete="tel" />
+            {errors.phone && <span className="field-error">{errors.phone}</span>}
+
+            <label htmlFor="cf-email">EMAIL *</label>
+            <input id="cf-email" value={values.email} onChange={setVal('email')} required type="email" placeholder="ban@congty.com" autoComplete="email" />
+            {errors.email && <span className="field-error">{errors.email}</span>}
 
             <label htmlFor="cf-company">DOANH NGHIỆP</label>
-            <input id="cf-company" placeholder="Tên công ty / thương hiệu" />
+            <input id="cf-company" value={values.company} onChange={setVal('company')} placeholder="Tên công ty / thương hiệu" autoComplete="organization" />
 
             <label htmlFor="cf-industry">NGÀNH</label>
-            <select id="cf-industry">
+            <select id="cf-industry" value={values.industry} onChange={setVal('industry')}>
               <option value="">Chọn ngành</option>
               {INDUSTRIES.map((industry) => <option key={industry.id} value={industry.id}>{industry.name}</option>)}
               <option value="khac">Khác</option>
             </select>
 
             <label htmlFor="cf-need">BẠN ĐANG CẦN</label>
-            <select id="cf-need">
+            <select id="cf-need" value={values.need} onChange={setVal('need')}>
               <option value="">Chọn nhu cầu</option>
               {CONSULTATION_NEEDS.map((need) => <option key={need} value={need}>{need}</option>)}
             </select>
 
             <label htmlFor="cf-budget">NGÂN SÁCH</label>
-            <select id="cf-budget">
+            <select id="cf-budget" value={values.budget} onChange={setVal('budget')}>
               <option value="">Chọn khoảng ngân sách</option>
               {CONSULTATION_BUDGETS.map((budget) => <option key={budget} value={budget}>{budget}</option>)}
             </select>
 
             <label htmlFor="cf-desc">MÔ TẢ DỰ ÁN</label>
-            <textarea id="cf-desc" rows="4" placeholder="Mô tả ngắn về mục tiêu, tính năng hoặc câu hỏi của bạn..." />
+            <textarea id="cf-desc" rows="4" value={values.description} onChange={setVal('description')} placeholder="Mô tả ngắn về mục tiêu, tính năng hoặc câu hỏi của bạn..." maxLength={2000} />
+            {errors.description && <span className="field-error">{errors.description}</span>}
 
-            <button className="button button-primary" type="submit">GỬI YÊU CẦU <ArrowRight size={15} /></button>
+            <label className="consent-row" style={{display:'flex',gap:10,alignItems:'flex-start',fontSize:12,lineHeight:1.6,color:'#c9c4ba',textTransform:'none',letterSpacing:0}}>
+              <input type="checkbox" checked={values.consent} onChange={setVal('consent')} style={{marginTop:4,accentColor:'#d4a957'}} />
+              <span>Tôi đồng ý cho Bách Vân Quán lưu thông tin này để liên hệ tư vấn và cam kết bảo mật, không chia sẻ cho bên thứ ba. *</span>
+            </label>
+            {errors.consent && <span className="field-error">{errors.consent}</span>}
+
+            {formError && <div className="form-error" role="alert" style={{padding:'12px 14px',borderRadius:12,background:'rgba(220,60,60,0.12)',border:'1px solid rgba(220,60,60,0.35)',color:'#ffb4b4',fontSize:13}}>{formError}</div>}
+
+            <button className="button button-primary" type="submit" disabled={sending} style={{opacity: sending?0.7:1}}>
+              {sending ? 'ĐANG GỬI...' : <>GỬI YÊU CẦU <ArrowRight size={15} /></>}
+            </button>
+            <p style={{margin:0,color:'#8a857e',fontSize:11,lineHeight:1.6}}>Bảo mật: form gửi qua HTTPS, chống spam & giới hạn tần suất. Dữ liệu chỉ gửi tới email/Telegram của bạn.</p>
           </form>
         )}
       </div>

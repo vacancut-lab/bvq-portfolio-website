@@ -1331,6 +1331,8 @@
   color: #b8b1a5;
 }
 
+.consultation-form .field-error { margin: -8px 0 0; color: #ffb4b4; font-size: 12px; line-height: 1.5; }
+.consultation-form .consent-row { font-size: 10px !important; text-transform: none !important; letter-spacing: 0 !important; }
 .consultation-form input,
 .consultation-form select,
 .consultation-form textarea {
