@@ -7,11 +7,13 @@ import {
   CarFront,
   Clock3,
   Flower2,
+  Home,
   MapPinned,
   Menu,
   Shirt,
   Sparkles,
   Star,
+  Tag,
   Users,
   UtensilsCrossed,
   X,
@@ -129,7 +131,7 @@ function Showroom() {
           <h2>Lĩnh vực của tôi</h2>
           <span className="gold-rule" />
           <p>Mỗi lĩnh vực là một câu chuyện,<br />mỗi thiết kế là một hành trình cảm xúc.</p>
-          <a className="button projects-button" href="#tu-duy">Xem tất cả dự án <ArrowRight size={15} /></a>
+          <a className="button projects-button" href="/san-pham/spa">Xem tất cả dự án <ArrowRight size={15} /></a>
         </div>
         <div className="field-grid">
           {worlds.map((world, index) => {
@@ -213,7 +215,7 @@ function Pricing() {
         <h2>Sản phẩm số tốt<br />không nên là <em>đặc quyền.</em></h2>
         <p>999.000 VNĐ là mức khởi điểm cho một website được thiết kế riêng. Chi phí thực tế phụ thuộc vào phạm vi và chức năng của sản phẩm.</p>
       </div>
-      <div className="price-focus"><span>Giá khởi điểm</span><strong>999.000<small> VNĐ</small></strong><a className="button button-primary" href="#lien-he">Trao đổi về dự án <ArrowRight size={17} /></a></div>
+      <div className="price-focus"><span>Giá khởi điểm</span><strong>999.000<small> VNĐ</small></strong><a className="button button-primary" href="/pricing">Trao đổi về dự án <ArrowRight size={17} /></a></div>
       <div className="price-list">{pricing.map(([name, price]) => <div key={name}><span>{name}</span><strong>{price}</strong></div>)}</div>
     </section>
   );
@@ -226,47 +228,68 @@ function Footer() {
       <p className="eyebrow"><span /> Một cuộc trò chuyện là đủ để bắt đầu</p>
       <h2>Chúng ta nên<br /><em>xây gì?</em></h2>
       <p>Hãy kể cho tôi về doanh nghiệp, ý tưởng hoặc vấn đề bạn muốn giải quyết.</p>
-      <a className="button button-primary button-large" href="mailto:hello@motstudio.vn">Bắt đầu một dự án <ArrowRight /></a>
+      <a className="button button-primary button-large" href="/pricing">Bắt đầu một dự án <ArrowRight /></a>
       <div className="footer-bottom"><Brand /><span>© 2026 — Được thiết kế và xây dựng bởi một người.</span><a href="#top">Trở về đầu trang ↑</a></div>
     </footer>
   );
 }
 
+function FloatingDock() {
+  const path = window.location.pathname;
+  const isPricing = /^\/pricing\/?$/.test(path);
+  const isProduct = /^\/san-pham\/[^/]+\/?$/.test(path);
+  return (
+    <nav className={`floating-dock${isProduct ? ' dock-offset' : ''}`} aria-label="Điều hướng nhanh">
+      <a className="dock-pill dock-home" href="/" aria-label="Về trang chính">
+        <Home size={15} /> Trang chính
+      </a>
+      <a
+        className={`dock-pill dock-pricing${isPricing ? ' is-current' : ''}`}
+        href="/pricing"
+        aria-label="Xem bảng giá"
+        aria-current={isPricing ? 'page' : undefined}
+      >
+        <Tag size={15} /> Bảng giá
+      </a>
+    </nav>
+  );
+}
+
 export function App() {
   if (/^\/pricing\/?$/.test(window.location.pathname)) {
-    return <PricingPage />;
+    return <><PricingPage /><FloatingDock /></>;
   }
 
   // Dedicated product experiences live one level below the product overview.
   // Keep the parent slugs available for the shared product landing page.
   if (/^\/san-pham\/nha-hang\/kham-pha\/?$/.test(window.location.pathname)) {
-    return <RestaurantPage />;
+    return <><RestaurantPage /><FloatingDock /></>;
   }
 
   if (/^\/san-pham\/du-lich\/kham-pha\/?$/.test(window.location.pathname)) {
-    return <TravelPage />;
+    return <><TravelPage /><FloatingDock /></>;
   }
 
   if (/^\/san-pham\/bat-dong-san\/kham-pha\/?$/.test(window.location.pathname)) {
-    return <RealEstatePage />;
+    return <><RealEstatePage /><FloatingDock /></>;
   }
 
   if (/^\/san-pham\/spa\/(?:kham-pha|khampha)\/?$/.test(window.location.pathname)) {
-    return <SpaExperience />;
+    return <><SpaExperience /><FloatingDock /></>;
   }
 
   if (/^\/san-pham\/o-to\/kham-pha\/?$/.test(window.location.pathname)) {
-    return <AutomotiveExperience />;
+    return <><AutomotiveExperience /><FloatingDock /></>;
   }
 
   if (/^\/san-pham\/thoi-trang\/kham-pha\/?$/.test(window.location.pathname)) {
-    return <FashionExperience />;
+    return <><FashionExperience /><FloatingDock /></>;
   }
 
   const productMatch = window.location.pathname.match(/^\/san-pham\/([^/]+)\/?$/);
   if (productMatch && productSlugs.includes(productMatch[1])) {
-    return <ProductPage slug={productMatch[1]} />;
+    return <><ProductPage slug={productMatch[1]} /><FloatingDock /></>;
   }
 
-  return <><Header /><main><Hero /><Showroom /><Thinking /><Difference /><Process /><Pricing /></main><Footer /></>;
+  return <><Header /><main><Hero /><Showroom /><Thinking /><Difference /><Process /><Pricing /></main><Footer /><FloatingDock /></>;
 }

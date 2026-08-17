@@ -447,3 +447,312 @@ em { color: var(--gold-bright); font-weight: 400; }
     min-height: 94px;
   }
 }
+
+/* =========================================================
+   UPGRADE — Floating dock + polished imagery & buttons
+   ========================================================= */
+
+/* Floating dock — bám nổi mọi trang: Trang chính + Bảng giá */
+.floating-dock {
+  position: fixed;
+  left: 50%;
+  bottom: max(16px, env(safe-area-inset-bottom, 0px) + 16px);
+  z-index: 95;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px;
+  border-radius: 999px;
+  background: rgba(14, 13, 11, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  backdrop-filter: blur(18px) saturate(1.18);
+  -webkit-backdrop-filter: blur(18px) saturate(1.18);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.44), 0 1px 0 rgba(255, 255, 255, 0.08) inset, 0 0 0 1px rgba(212, 169, 87, 0.08);
+  transform: translateX(-50%);
+  animation: dock-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes dock-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(16px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+.dock-pill {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 18px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.22s ease, background 0.22s ease, color 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+}
+
+.dock-pill:active { transform: scale(0.97); }
+
+.dock-home {
+  color: #ece6da;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.dock-home:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+.dock-pricing {
+  color: #17120a;
+  background: linear-gradient(180deg, #f3cd7a 0%, #e8b95a 100%);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 6px 22px rgba(212, 169, 87, 0.38), 0 1px 0 rgba(255, 255, 255, 0.55) inset;
+}
+
+.dock-pricing:hover {
+  background: linear-gradient(180deg, #f7d78a 0%, #eec46a 100%);
+  box-shadow: 0 10px 28px rgba(212, 169, 87, 0.48), 0 1px 0 rgba(255, 255, 255, 0.6) inset;
+  transform: translateY(-1px);
+}
+
+.dock-pricing.is-current {
+  box-shadow: 0 0 0 2px rgba(240, 200, 114, 0.3), 0 8px 24px rgba(212, 169, 87, 0.4);
+}
+
+/* Ẩn các nút "Trang chính" riêng lẻ của từng experience — đã có dock chung */
+.spa-home-float,
+.velas-float-home,
+.auto-home {
+  display: none !important;
+}
+
+.floating-dock.dock-offset {
+  bottom: 110px;
+}
+
+/* Tránh chồng lấn với mobile-sticky-cta của /pricing */
+@media (max-width: 680px) {
+  .pricing-page .mobile-sticky-cta {
+    bottom: 74px;
+  }
+
+  .floating-dock.dock-offset {
+    bottom: 96px;
+  }
+
+  .floating-dock {
+    gap: 6px;
+    padding: 6px;
+  }
+
+  .dock-pill {
+    min-height: 38px;
+    padding: 0 14px;
+    font-size: 9.5px;
+  }
+}
+
+/* --- Hero image polish: richer, sharper --- */
+.hero::before {
+  filter: saturate(1.06) contrast(1.06) brightness(1.02);
+}
+
+.hero::after {
+  background:
+    linear-gradient(90deg, rgba(3, 3, 2, 0.96) 0%, rgba(4, 3, 2, 0.72) 36%, rgba(4, 3, 2, 0.08) 78%),
+    linear-gradient(0deg, rgba(3, 3, 2, 0.58), transparent 42%),
+    radial-gradient(ellipse at 74% 35%, rgba(212, 169, 87, 0.08), transparent 42%);
+}
+
+/* Hero buttons — guarantee clickability + glow */
+.hero-button,
+.projects-button,
+.price-focus .button,
+.footer .button-large {
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.hero-button::after,
+.projects-button::after,
+.price-focus .button::after,
+.footer .button-large::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at 30% 50%, rgba(255, 255, 255, 0.18), transparent 55%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.hero-button:hover::after,
+.projects-button:hover::after,
+.price-focus .button:hover::after,
+.footer .button-large:hover::after {
+  opacity: 1;
+}
+
+/* --- Field cards — cinematic image upgrade --- */
+.field-card {
+  background-color: #0d0c0a;
+  background-size: cover;
+  background-position: center;
+  filter: saturate(1.04) contrast(1.03);
+}
+
+.field-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: inherit;
+  background-size: cover;
+  background-position: center;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.6s ease;
+}
+
+.field-card {
+  background-image: none !important;
+}
+
+.field-card::before {
+  background-image: var(--field-image);
+}
+
+.field-card:hover::before {
+  transform: scale(1.06);
+  filter: saturate(1.12) contrast(1.06) brightness(1.04);
+}
+
+.field-shade {
+  background: linear-gradient(0deg, rgba(5, 4, 3, 0.96) 0%, rgba(5, 4, 3, 0.55) 38%, rgba(5, 4, 3, 0.02) 68%);
+  transition: background 0.35s ease;
+}
+
+.field-card:hover .field-shade {
+  background: linear-gradient(0deg, rgba(5, 4, 3, 0.98) 0%, rgba(5, 4, 3, 0.45) 42%, rgba(5, 4, 3, 0.02) 72%);
+}
+
+.field-label i {
+  background: rgba(0, 0, 0, 0.32);
+  backdrop-filter: blur(6px);
+  transition: transform 0.35s ease, background 0.35s ease, border-color 0.35s ease, color 0.35s ease;
+}
+
+.field-card:hover .field-label i {
+  transform: scale(1.06);
+  background: rgba(212, 169, 87, 0.18);
+  border-color: var(--gold-bright);
+  color: #fff7e6;
+}
+
+.field-label {
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.55);
+  transition: transform 0.35s ease;
+}
+
+.field-card:hover .field-label {
+  transform: translateY(-2px);
+}
+
+/* --- Showroom stats — subtle depth --- */
+.showroom-stats > div > i {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(212, 169, 87, 0.12) inset;
+}
+
+.showroom-stats strong {
+  text-shadow: 0 2px 18px rgba(212, 169, 87, 0.22);
+}
+
+/* --- Thinking / Difference / Process — image depth --- */
+.thinking-image,
+.pricing-image {
+  filter: saturate(1.06) contrast(1.05);
+}
+
+/* --- Price focus card — premium glass --- */
+.price-focus {
+  position: relative;
+  overflow: hidden;
+}
+
+.price-focus::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: radial-gradient(ellipse at 70% 18%, rgba(212, 169, 87, 0.18), transparent 42%);
+  pointer-events: none;
+}
+
+.price-focus > strong {
+  text-shadow: 0 8px 32px rgba(212, 169, 87, 0.28);
+  letter-spacing: -0.04em;
+}
+
+.price-focus .button {
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.22), 0 1px 0 rgba(255, 255, 255, 0.7) inset;
+}
+
+.price-focus .button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.28), 0 1px 0 rgba(255, 255, 255, 0.75) inset;
+}
+
+.price-list div {
+  transition: transform 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+}
+
+.price-list div:hover {
+  transform: translateY(-2px);
+  border-color: rgba(244, 236, 223, 0.22);
+  background: rgba(16, 14, 11, 0.72);
+}
+
+/* --- Footer CTA — glow --- */
+.footer .button-large {
+  box-shadow: 0 14px 40px rgba(212, 169, 87, 0.28), 0 1px 0 rgba(255, 255, 255, 0.55) inset;
+}
+
+.footer .button-large:hover {
+  box-shadow: 0 18px 48px rgba(212, 169, 87, 0.38), 0 1px 0 rgba(255, 255, 255, 0.6) inset;
+}
+
+/* --- Menu button — clearer hit area --- */
+.menu-button {
+  cursor: pointer;
+  transition: background 0.25s ease, border-color 0.25s ease, transform 0.2s ease;
+}
+
+.menu-button:hover {
+  background: rgba(212, 169, 87, 0.14);
+  border-color: rgba(212, 169, 87, 0.75);
+}
+
+.menu-button:active {
+  transform: scale(0.96);
+}
+
+/* --- Accessibility: focus & reduced motion for new elements --- */
+.floating-dock a:focus-visible {
+  outline: 2px solid var(--gold-bright);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .floating-dock { animation: none; }
+  .field-card::before { transition: none; }
+  .field-card:hover::before { transform: none; }
+}
